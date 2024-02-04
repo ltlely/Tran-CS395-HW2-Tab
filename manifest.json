@@ -1,13 +1,11 @@
 {
-    "manifest_version": 3,
-    "author": "Studious Student",
-    "name": "CS395 - New Tab",
-    "version": "0.1",
-    "description": "This extension overrides the default new tab.",
-    "icons": {
-      "128": "assets/icon.png"
-    },
-    "chrome_url_overrides": {
-      "newtab": "newtab.html"
-    }
-  }
+  "manifest_version": 3,
+  "author": "LyLy Tran",
+  "name": "CS395 - Pastel",
+  "version": "0.1",
+  "description": "This extension overrides the default new tab into a customized pastel themed.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "host_permissions": ["https://api.quotable.io/random"]
+}
