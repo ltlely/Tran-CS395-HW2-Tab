@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    var imgUrl = 'https://source.unsplash.com/random/1920x1080/?pastel';
-    document.getElementById('wallpaperImage').src = imgUrl;
+    let imageUrl = 'https://source.unsplash.com/random/1920x1080/?pastel';
+    document.getElementById('wallpaperImage').src = imageUrl;
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,40 +27,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     editableName.addEventListener("click", () => {
         let range = document.createRange();
-        let sel = window.getSelection();
+        let selection = window.getSelection();
         range.selectNodeContents(editableName);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    });
-
-    let isFirstClick = true;
-    editableName.addEventListener("click", () => {
-        if (isFirstClick) {
-            editableName.textContent = '';
-            isFirstClick = false;
-        }
+        selection.removeAllRanges();
+        selection.addRange(range);
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchRandomQuote();
-});
-
-function fetchRandomQuote() {
+document.addEventListener('DOMContentLoaded', () => {
     fetch('https://api.quotable.io/random')
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => {
+            response.json()
+        })
+        .then((data) => {
             displayQuote(data);
         })
-        .catch(error => console.error('Error fetching quote:', error));
-}
+        .catch((error) => {
+            console.log(error)
+        });
+});
 
 function displayQuote(data) {
     const quoteText = document.getElementById('quoteText');
     quoteText.textContent = `"${data.content}"`;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     let isRunning = false;
     let isFocusTime = true; 
     let focusDuration = 25 * 60;
@@ -68,28 +60,38 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentDuration = focusDuration; 
     let timerId;
 
-    const timeDisplay = document.getElementById('timeDisplay');
-    const startBtn = document.getElementById('startBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const focusInput = document.getElementById('focusDuration');
-    const breakInput = document.getElementById('breakDuration');
-    const modeDisplay = document.getElementById('mode');
+    const timeComponents = {
+        timeDisplay: document.getElementById('timeDisplay'),
+        startBtn: document.getElementById('startBtn'),
+        pauseBtn: document.getElementById('pauseBtn'),
+        resetBtn: document.getElementById('resetBtn'),
+        focusInput: document.getElementById('focusDuration'),
+        breakInput: document.getElementById('breakDuration'),
+        modeDisplay: document.getElementById('mode')
+    };
 
-    startBtn.addEventListener('click', function() {
+    timeComponents.startBtn.addEventListener('click', () => {
         if (!isRunning) {
             updateDurations(); 
             startTimer();
         }
     });
 
-    pauseBtn.addEventListener('click', pauseTimer);
-
-    resetBtn.addEventListener('click', resetTimer);
+    timeComponents.pauseBtn.addEventListener('click', () => {
+        clearInterval(timerId);
+        isRunning = false;
+    });
+    timeComponents.resetBtn.addEventListener('click', () => {
+        clearInterval(timerId);
+        isRunning = false;
+        isFocusTime = true; 
+        updateDurations(); 
+        setupNextInterval(); 
+    });
 
     function startTimer() {
         isRunning = true;
-        timerId = setInterval(function() {
+        timerId = setInterval(() => {
             currentDuration--;
             updateDisplay(currentDuration);
             if (currentDuration <= 0) {
@@ -100,27 +102,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    function pauseTimer() {
-        clearInterval(timerId);
-        isRunning = false;
-    }
-
-    function resetTimer() {
-        clearInterval(timerId);
-        isRunning = false;
-        isFocusTime = true; 
-        updateDurations(); 
-        setupNextInterval(); 
-    }
-
     function updateDurations() {
-        focusDuration = parseInt(focusInput.value) * 60;
-        breakDuration = parseInt(breakInput.value) * 60;
+        focusDuration = parseInt(timeComponents.focusInput.value);
+        focusDuration = focusDuration * 60;
+        breakDuration = parseInt(timeComponents.breakInput.value);
+        breakDuration = breakDuration * 60;
     }
 
     function setupNextInterval() {
-        currentDuration = isFocusTime ? focusDuration : breakDuration;
-        modeDisplay.textContent = isFocusTime ? "Focus" : "Break";
+        if(isFocusTime) {
+            currentDuration = focusDuration;
+            timeComponents.modeDisplay.textContent = "Focus";
+        } else {
+            currentDuration = breakDuration;
+            timeComponents.modeDisplay.textContent = "Break";
+        }
+
         updateDisplay(currentDuration);
         if (isRunning) {
             startTimer();
@@ -130,7 +127,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDisplay(seconds) {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        timeDisplay.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        if (remainingSeconds < 10) {
+            timeDisplay.textContent = `${minutes}:0${remainingSeconds}`;
+        } else {
+            timeDisplay.textContent = `${minutes}:${remainingSeconds}`;
+        }        
     }
 
     updateDisplay(focusDuration);
