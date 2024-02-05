@@ -36,14 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('https://api.quotable.io/random')
-        .then((response) => {
-            response.json()
-        })
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
             displayQuote(data);
         })
         .catch((error) => {
-            console.log(error)
+            console.log(error);
         });
 });
 
